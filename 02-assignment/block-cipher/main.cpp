@@ -89,15 +89,15 @@ std::string ofb(const std::vector<std::bitset<16>> blocks, const std::bitset<16>
 	return stream.str();
 }
 
-void flipLastBit(std::string &str)
+void flipLastBitInBlockOne(std::string &str)
 {
-	if (str[str.size() - 1] == '1')
+	if (str[15] == '1')
 	{
-		str[str.size() - 1] = '0';
+		str[15] = '0';
 	}
 	else
 	{
-		str[str.size() - 1] = '1';
+		str[15] = '1';
 	}
 }
 
@@ -119,7 +119,7 @@ int main()
 	std::cout << std::endl << "ciphertext: " << ciphertext << std::endl;
 
 	std::vector<std::bitset<16>> blocks2;
-	flipLastBit(ciphertext);
+	flipLastBitInBlockOne(ciphertext);
 	std::cout << std::endl << "ciphertext: " << ciphertext << std::endl;
 	constructBlocks2(blocks2, ciphertext, numberOfBlocks);
 
