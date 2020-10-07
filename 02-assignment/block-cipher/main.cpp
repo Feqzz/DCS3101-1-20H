@@ -4,7 +4,7 @@
 #include <vector>
 #include <sstream>
 
-std::string binaryText(std::string str)
+std::string binaryText(const std::string str)
 {
 	std::string binaryText;
 	for (size_t i = 0; i < str.size(); i++)
@@ -15,22 +15,6 @@ std::string binaryText(std::string str)
 }
 
 void constructBlocks(std::vector<std::bitset<16>> &vec, const std::string plaintext,
-	const int numberOfBlocks)
-{
-	std::string binaryPlainText;
-
-	for (size_t i = 0; i < plaintext.size(); i++)
-	{
-		binaryPlainText += std::bitset<8>(plaintext[i]).to_string();
-	}
-
-	for (int j = 0; j < numberOfBlocks; j++)
-	{
-		vec.push_back(std::bitset<16>(binaryPlainText.substr((j*16), 16)));
-	}
-}
-
-void constructBlocks2(std::vector<std::bitset<16>> &vec, const std::string plaintext,
 	const int numberOfBlocks)
 {
 	for (int j = 0; j < numberOfBlocks; j++)
@@ -103,15 +87,17 @@ void flipLastBitInBlockOne(std::string &str)
 
 int main()
 {
-	std::string plaintext = "DCS-3101";
+	static const std::string plaintext = "DCS-3101";
 	//std::string initializationVector = "NO";
 	//std::string key = "EU";
-	const int numberOfBlocks = ceil(plaintext.length() / 2.0);
+	static const int numberOfBlocks = ceil(plaintext.length() / 2.0);
 
-	std::bitset<16> iv(binaryText("NO"));
-	std::bitset<16> key(binaryText("EU"));
+	static const std::bitset<16> iv(binaryText("NO"));
+	static const std::bitset<16> key(binaryText("EU"));
 	std::vector<std::bitset<16>> blocks;
-	constructBlocks(blocks, plaintext, numberOfBlocks);
+
+	static const std::string binaryPlainText = binaryText(plaintext);
+	constructBlocks(blocks, binaryPlainText, numberOfBlocks);
 
 	std::string ciphertext;
 
@@ -120,9 +106,8 @@ int main()
 
 	std::vector<std::bitset<16>> blocks2;
 	flipLastBitInBlockOne(ciphertext);
-	std::cout << std::endl << "ciphertext: " << ciphertext << std::endl;
-	constructBlocks2(blocks2, ciphertext, numberOfBlocks);
-
+	std::cout << "ciphertext: " << ciphertext << std::endl;
+	constructBlocks(blocks2, ciphertext, numberOfBlocks);
 
 	ciphertext = ofb(blocks2, key, iv, numberOfBlocks);
 	std::cout << std::endl << "ciphertext: " << ciphertext << std::endl;
